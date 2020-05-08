@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Ubuntu', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.grid-search{
+  padding: 300px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 84px;
+  align-items: center;
+  justify-items: center;
+}
+
+.display--none{
+  display: none;
+}
+
+.display--grid{
+  display: grid;
+}
