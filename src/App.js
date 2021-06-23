@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 
-import './index.css';
+import ImageLogo from './assets/images/logo-fontmeme.png'
+import FindPokemonForm from './components/Forms/FindPokemonForm.component';
+
+import Image from './components/Media/Image.component'
+
+import { getPokemonLink } from './services/getPokemonLink.service'
 
 function App() {
 
@@ -10,52 +15,46 @@ function App() {
 	const [ visible, setVisible ] = useState('')
 	const [ link, setLink ] = useState('')
 
-	const handleSearch = (e) => {
+	const callGetPokemonLink = (e) => {
 		e.preventDefault()
 
-		const xhr = new XMLHttpRequest();
+		let textNotfound = document.getElementById('text-not-found')
+		if (textNotfound != null) textNotfound.remove()
 
-		xhr.open("GET", `https://pokeapi.co/api/v2/pokemon/${name}`)
-		xhr.send(null)
+		getPokemonLink(name).then((response) => {
+			if (response.status === 200) response.json().then((res) => findPokemon(res))
+			else notFoundPokemon()
+		})
 
-		xhr.onreadystatechange = function () {
-			if (xhr.readyState === 4) {
-				if (xhr.status === 200) {
+		const findPokemon = data => {
+			setLink(`https://www.pokemon.com/br/pokedex/${data.name}`)
+			setVisible('display--grid')
+		}
 
-					let response = JSON.parse(xhr.response)
-
-					if (document.getElementById('text-not-found') != null) {
-						document.getElementById('text-not-found').remove()
-					}
-
-					setLink(`https://www.pokemon.com/br/pokedex/${response.name}`)
-					setVisible('display--grid')
-
-				} else {
-
-					setVisible('')
-
-					let msgTarget = document.getElementById('form-search')
-					let msgText = document.createElement('p')
-						msgText.id = 'text-not-found'
-						msgText.innerText = 'Esse pokemon não existe'
-					msgTarget.appendChild(msgText)
-
-				}
-			}
+		const notFoundPokemon = () => {
+			setVisible('')
+			let msgTarget = document.getElementById('form-search')
+			let msgText = document.createElement('p')
+			msgText.id = 'text-not-found'
+			msgText.innerText = 'Esse pokemon não existe'
+			msgTarget.appendChild(msgText)
 		}
 	}
 
 	return (
 		<div className="grid-search">
 			<div>
-				<form id="form-search">
-					<input type="text" className="" value={name} onChange={e => setName(e.target.value)} /> <br/><br/>
-					<button onClick={handleSearch}>Pesquisar</button>
-				</form>
+				<Image src={ImageLogo} alt="Logo" />
 			</div>
-			<div className={'display--none ' + visible}>
-				<QRCode value={link} />
+			<div>
+				<FindPokemonForm
+					stateValue={name}
+					state={e => setName(e.target.value)}
+					onClick={callGetPokemonLink}
+				/>
+				<div className={'display--none qr-code__container ' + visible}>
+					<QRCode value={link} />
+				</div>
 			</div>
 		</div>
 	);

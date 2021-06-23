@@ -1,0 +1,1 @@
+export const getPokemon = target => `https://pokeapi.co/api/v2/pokemon/${target}`
